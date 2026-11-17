@@ -2,6 +2,7 @@ package com.mobileide.studio.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BatteryFull
@@ -42,14 +43,14 @@ fun PreviewScreen() {
                 label = { Text("activity_main.xml", style = MaterialTheme.typography.labelSmall, color = color.onSurface) }
             )
             IconButton(onClick = {}) {
-                Icon(imageVector = Refresh, contentDescription = "Refresh preview", tint = color.primary)
+                Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh preview", tint = color.primary)
             }
             Spacer(modifier = Modifier.weight(1f))
             AssistChip(onClick = {}, label = { Text("Pixel 7", style = MaterialTheme.typography.labelSmall, color = color.onSurface) })
             AssistChip(onClick = {}, label = { Text("Portrait", style = MaterialTheme.typography.labelSmall, color = color.onSurface) })
             AssistChip(onClick = {}, label = { Text("Light", style = MaterialTheme.typography.labelSmall, color = color.onSurface) })
             IconButton(onClick = {}) {
-                Icon(imageVector = Fullscreen, contentDescription = "Full screen preview", tint = color.primary)
+                Icon(imageVector = Icons.Default.Fullscreen, contentDescription = "Full screen preview", tint = color.primary)
             }
         }
 
@@ -91,11 +92,11 @@ private fun PreviewDeviceFrame(content: @Composable () -> Unit) {
                     .align(Alignment.TopCenter),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(imageVector = SignalCellularAlt, contentDescription = null, tint = color.onSurfaceVariant, modifier = Modifier.size(16.dp))
+                Icon(imageVector = Icons.Default.SignalCellularAlt, contentDescription = null, tint = color.onSurfaceVariant, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = "10:42", style = MaterialTheme.typography.labelSmall, color = color.onSurfaceVariant)
                 Spacer(modifier = Modifier.weight(1f))
-                Icon(imageVector = BatteryFull, contentDescription = null, tint = color.onSurfaceVariant, modifier = Modifier.size(16.dp))
+                Icon(imageVector = Icons.Default.BatteryFull, contentDescription = null, tint = color.onSurfaceVariant, modifier = Modifier.size(16.dp))
             }
 
             // Preview content area
@@ -141,8 +142,8 @@ private fun NavBarIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, la
 private fun PreviewPlaceholder(message: String, detail: String) {
     val color = MaterialTheme.colorScheme
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(imageVector = SmartScreen, contentDescription = null, tint = color.onSurfaceVariant, modifier = Modifier.size(56.dp))
-        Spacer(modifier = androidx.compose.foundation.layout.size(16.dp))
+        Icon(imageVector = Icons.Default.SmartScreen, contentDescription = null, tint = color.onSurfaceVariant, modifier = Modifier.size(56.dp))
+        Spacer(modifier = Modifier.size(16.dp))
         Text(text = message, style = MaterialTheme.typography.titleMedium, color = color.onSurface)
         Text(text = detail, style = MaterialTheme.typography.bodySmall, color = color.onSurfaceVariant)
     }

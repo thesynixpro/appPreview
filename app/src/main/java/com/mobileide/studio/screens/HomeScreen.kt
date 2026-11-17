@@ -91,10 +91,10 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                QuickActionButton("Create", Add) { showCreate = true }
-                QuickActionButton("Import", FolderOpen) { onImport() }
-                QuickActionButton("Preview", SmartScreen) { onOpenPreview() }
-                QuickActionButton("Terminal", Terminal) { onOpenTerminal() }
+                QuickActionButton("Create", Icons.Default.Add) { showCreate = true }
+                QuickActionButton("Import", Icons.Default.FolderOpen) { onImport() }
+                QuickActionButton("Preview", Icons.Default.SmartScreen) { onOpenPreview() }
+                QuickActionButton("Terminal", Icons.Default.Terminal) { onOpenTerminal() }
             }
         }
 
@@ -107,7 +107,7 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        imageVector = FolderOff,
+                        imageVector = Icons.Default.FolderOff,
                         contentDescription = null,
                         tint = color.onSurfaceVariant,
                         modifier = Modifier.size(32.dp)
@@ -323,7 +323,7 @@ private fun SectionTitle(text: String) {
         text = text,
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(horizontal = 16.dp, top = 16.dp, bottom = 4.dp)
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp)
     )
 }
 

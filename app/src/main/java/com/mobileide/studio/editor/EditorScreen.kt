@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Redo
 import androidx.compose.material.icons.filled.Search
@@ -153,13 +154,13 @@ fun EditorScreen(file: ProjectFile, onSave: () -> Unit = {}) {
                 Text("Save", style = MaterialTheme.typography.labelLarge)
             }
             IconButton(onClick = { undo() }, enabled = histIndex > 0) {
-                Icon(imageVector = Undo, contentDescription = "Undo")
+                Icon(imageVector = Icons.Default.Undo, contentDescription = "Undo")
             }
             IconButton(onClick = { redo() }, enabled = histIndex < history.lastIndex) {
-                Icon(imageVector = Redo, contentDescription = "Redo")
+                Icon(imageVector = Icons.Default.Redo, contentDescription = "Redo")
             }
             IconButton(onClick = { showFind = !showFind }) {
-                Icon(imageVector = Search, contentDescription = "Find")
+                Icon(imageVector = Icons.Default.Search, contentDescription = "Find")
             }
         }
 
@@ -201,7 +202,7 @@ fun EditorScreen(file: ProjectFile, onSave: () -> Unit = {}) {
                 TextButton(onClick = { findFirst() }) { Text("Find") }
                 TextButton(onClick = { replaceAll() }) { Text("Replace All") }
                 IconButton(onClick = { showFind = false }) {
-                    Icon(imageVector = Close, contentDescription = "Close find")
+                    Icon(imageVector = Icons.Default.Close, contentDescription = "Close find")
                 }
             }
             Divider(modifier = Modifier.fillMaxWidth())

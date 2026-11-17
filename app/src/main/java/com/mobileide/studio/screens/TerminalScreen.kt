@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -31,7 +32,7 @@ fun TerminalScreen() {
     }
 
     var command by remember { mutableStateOf("") }
-    var history by remember { mutableStateListOf<String>() }
+    val history = remember { mutableStateListOf<String>() }
 
     fun runCommand() {
         val cmd = command.trim()
@@ -51,7 +52,7 @@ fun TerminalScreen() {
 
         // Working directory chip
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, top = 4.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = " ", style = MaterialTheme.typography.bodySmall, color = color.onSurfaceVariant, modifier = Modifier.size(4.dp))
@@ -109,7 +110,7 @@ fun TerminalScreen() {
                 }
             )
             IconButton(onClick = { runCommand() }) {
-                Icon(imageVector = ArrowForward, contentDescription = "Run", tint = color.primary)
+                Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Run", tint = color.primary)
             }
         }
 

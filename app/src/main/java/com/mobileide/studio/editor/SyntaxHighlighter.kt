@@ -9,7 +9,7 @@ import androidx.compose.ui.text.withStyle
 object SyntaxHighlighter {
     private val commentStyle = SpanStyle(color = Color(0xFF8A8A92))
     private val stringStyle = SpanStyle(color = Color(0xFF4CAF50))
-    private val keywordStyle = SpanStyle(color = Color(0xFFBB86FC), fontWeight = androidx.compose.ui.text.FontWeight.Bold)
+    private val keywordStyle = SpanStyle(color = Color(0xFFBB86FC), fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
     private val annotationStyle = SpanStyle(color = Color(0xFF3AA9FF))
     private val numberStyle = SpanStyle(color = Color(0xFFFFB300))
 
@@ -50,18 +50,18 @@ object SyntaxHighlighter {
             var last = 0
             for (span in spans) {
                 if (span.start > last) {
-                    addText(text.substring(last, span.start.coerceAtMost(text.length)))
+                    append(text.substring(last, span.start.coerceAtMost(text.length)))
                 }
                 val end = span.end.coerceAtMost(text.length)
                 if (span.start < end) {
                     withStyle(span.style) {
-                        addText(text.substring(span.start, end))
+                        append(text.substring(span.start, end))
                     }
                 }
                 last = end
             }
             if (last < text.length) {
-                addText(text.substring(last))
+                append(text.substring(last))
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.mobileide.studio.screens
 
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FolderOff
 import androidx.compose.foundation.clickable
@@ -49,7 +50,7 @@ fun ProjectsScreen(projectManager: ProjectManager, onOpen: (ProjectFile) -> Unit
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    imageVector = FolderOff,
+                    imageVector = Icons.Default.FolderOff,
                     contentDescription = null,
                     tint = color.onSurfaceVariant,
                     modifier = Modifier.size(48.dp)
@@ -136,7 +137,7 @@ private fun ProjectCard(project: Project, projectManager: ProjectManager, onOpen
                     content = { Text(project.buildStatus.label, style = MaterialTheme.typography.labelSmall) }
                 )
                 IconButton(onClick = { onDelete() }) {
-                    Icon(imageVector = Delete, contentDescription = "Delete", tint = color.onSurfaceVariant)
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete", tint = color.onSurfaceVariant)
                 }
             }
         }

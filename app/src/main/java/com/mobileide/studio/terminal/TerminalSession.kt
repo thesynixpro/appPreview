@@ -36,13 +36,14 @@ class TerminalSession(private val context: Context) {
             stdin = OutputStreamWriter(process!!.outputStream)
             val reader = BufferedReader(InputStreamReader(process!!.inputStream))
             Thread {
-                var line: String?
-                while ((line = reader.readLine()) != null) {
+                var line = reader.readLine()
+                while (line != null) {
                     val l = line
                     handler.post {
                         output.add(l)
                         if (output.size > 3000) output.removeAt(0)
                     }
+                    line = reader.readLine()
                 }
                 handler.post { output.add("[shell process exited]") }
             }.start()
