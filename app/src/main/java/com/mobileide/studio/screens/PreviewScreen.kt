@@ -118,9 +118,9 @@ private fun PreviewDeviceFrame(content: @Composable () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                NavBarIcon(icon = ArrowBack, label = "Back")
-                NavBarIcon(icon = Home, label = "Home")
-                NavBarIcon(icon = Apps, label = "Recents")
+                NavBarIcon(icon = Icons.Default.ArrowBack, label = "Back")
+                NavBarIcon(icon = Icons.Default.Home, label = "Home")
+                NavBarIcon(icon = Icons.Default.Apps, label = "Recents")
             }
         }
     }
