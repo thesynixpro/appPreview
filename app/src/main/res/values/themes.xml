@@ -1,0 +1,13 @@
+<resources>
+    <!--
+      Platform Material parent only: this app renders its UI with Jetpack Compose,
+      so it does not depend on com.google.android.material XML themes/attributes.
+    -->
+    <style name="Theme.MobileIDE" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/surface_background</item>
+        <item name="android:statusBarColor">@color/surface_background</item>
+        <item name="android:navigationBarColor">@color/surface_background</item>
+        <item name="android:colorAccent">@color/accent_violet</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
