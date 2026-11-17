@@ -17,7 +17,7 @@ on:
           - release
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: build-${{ github.ref }}
@@ -42,13 +42,38 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install SDK platform and build tools
+      # The setup-android action can stop on an interactive `sdkmanager --licenses`
+      # prompt. Seed the license files and install packages non-interactively instead.
+      - name: Configure Android SDK
         run: |
-          yes | sdkmanager --licenses > /dev/null 2>&1 || true
-          sdkmanager "platforms;android-34" "build-tools;34.0.0"
+          set -euo pipefail
+
+          if [ -z "${ANDROID_HOME:-}" ]; then
+            for candidate in /usr/local/lib/android/sdk "$HOME/Android/Sdk"; do
+              if [ -d "$candidate" ]; then ANDROID_HOME="$candidate"; break; fi
+            done
+          fi
+          if [ -z "${ANDROID_HOME:-}" ]; then
+            echo "::error::No Android SDK found on this runner."
+            exit 1
+          fi
+
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+
+          mkdir -p "$ANDROID_HOME/licenses"
+          printf '24333f8a63b6825ea9c5514f83c2829b004d1fee\n' > "$ANDROID_HOME/licenses/android-sdk-license"
+          printf '84831b9409646a918e30573bab4c9c91346d8abd\n' > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKM" ]; then SDKM="$(command -v sdkmanager)"; fi
+
+          yes | "$SDKM" --licenses > /dev/null 2>&1 || true
+          "$SDKM" --install "platforms;android-34" "build-tools;34.0.0" "platform-tools" > /dev/null
+
+          echo "Platforms: $(ls "$ANDROID_HOME/platforms" | tr '\n' ' ')"
+          echo "Build tools: $(ls "$ANDROID_HOME/build-tools" | tr '\n' ' ')"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -56,45 +81,54 @@ jobs:
           gradle-version: "8.7"
 
       - name: Point Gradle at the SDK
-        run: echo "sdk.dir=${ANDROID_SDK_ROOT:-$ANDROID_HOME}" > local.properties
+        run: echo "sdk.dir=${ANDROID_HOME}" > local.properties
 
-      - name: "Build debug APK"
+      - name: Build debug APK
         if: github.event_name != 'workflow_dispatch' || inputs.variant == 'debug'
         run: gradle :app:assembleDebug --stacktrace --no-daemon
 
-      - name: "Build release APK (unsigned)"
+      - name: Build release APK (unsigned)
         if: github.event_name == 'workflow_dispatch' && inputs.variant == 'release'
         run: gradle :app:assembleRelease --stacktrace --no-daemon
 
-      - name: Report APK output
+      - name: Collect and verify APK
         if: success()
         run: |
-          SDK="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
-          find app/build/outputs/apk -name "*.apk" -exec ls -lh {} \;
-          APK=$(find app/build/outputs/apk -name "*.apk" | head -n 1)
-          if [ -n "$APK" ]; then
-            echo "Found: $APK"
-            "$SDK/build-tools/34.0.0/apksigner" verify --print-certs "$APK" \
-              || echo "APK is unsigned (expected for assembleRelease)."
-          fi
+          set -euo pipefail
+          mkdir -p dist
+          APK=$(find app/build/outputs/apk -name "*.apk" -print -quit)
+          if [ -z "$APK" ]; then echo "::error::No APK produced"; exit 1; fi
+          cp "$APK" "dist/MobileIDE-${GITHUB_RUN_NUMBER}.apk"
+          ls -lh dist/
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --print-certs "dist/MobileIDE-${GITHUB_RUN_NUMBER}.apk" \
+            || echo "::warning::APK is unsigned (expected for assembleRelease)."
 
-      - name: Upload debug APK
-        if: github.event_name != 'workflow_dispatch' || inputs.variant == 'debug'
+      - name: Upload APK artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: mobileide-apk
+          path: dist/*.apk
           if-no-files-found: error
           retention-days: 30
 
-      - name: Upload release APK
-        if: github.event_name == 'workflow_dispatch' && inputs.variant == 'release'
-        uses: actions/upload-artifact@v4
+      # Publishes the built APK to the Releases page so it can be downloaded
+      # directly, and marks it as the latest release.
+      - name: Publish APK to GitHub Release
+        if: success() && github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
         with:
-          name: app-release-unsigned-apk
-          path: app/build/outputs/apk/release/*.apk
-          if-no-files-found: error
-          retention-days: 30
+          tag_name: build-${{ github.run_number }}
+          name: "MobileIDE build ${{ github.run_number }}"
+          body: |
+            Automated APK build.
+
+            - Commit: `${{ github.sha }}`
+            - Variant: `${{ inputs.variant || 'debug' }}`
+            - Workflow run: ${{ github.run_number }}
+          files: dist/*.apk
+          make_latest: true
+          fail_on_unmatched_files: true
 
       - name: Upload build reports on failure
         if: failure()
